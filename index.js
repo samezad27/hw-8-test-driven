@@ -17,4 +17,19 @@ inquirer.prompt()([
 
         ]
     }
-]).then(()=> {})
+]).then(({ position })=> {
+    switch(position) {
+        case 'Manager':
+            //ask about office number
+
+        case 'Intern': 
+            //ask about school
+
+        case 'Engineer':
+            //ask about github
+
+        default: 
+    }
+
+
+})
