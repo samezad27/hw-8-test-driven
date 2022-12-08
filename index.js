@@ -54,25 +54,38 @@ function newEmployee() {
           break;
 
         case "Intern":
-          //ask about school
+          //ask about github
+          inquirer
+            .prompt([
+              {
+                type: "input",
+                name: "school",
+                message: "What is your school?",
+              },
+            ])
+            .then(({ school }) => {
+              employees.push(new Intern(name, id, email, school));
+
+              another();
+            });
           break;
 
         case "Engineer":
           //ask about github
           inquirer
-          .prompt([
-            {
-              type: "input",
-              name: "github",
-              message: "What is your github?",
-            },
-          ])
-          .then(({ github }) => {
-            employees.push(new Engineer(name, id, email, github));
+            .prompt([
+              {
+                type: "input",
+                name: "github",
+                message: "What is your github?",
+              },
+            ])
+            .then(({ github }) => {
+              employees.push(new Engineer(name, id, email, github));
 
-            another();
-          });
-        break;
+              another();
+            });
+          break;
 
         default:
       }
@@ -98,34 +111,44 @@ function renderHTMLFile() {
   fs.writeFileSync(
     "./index.html",
     `
+
+    <head>
+        <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+        <link rel="stylesheet" href="index.css">
+        <title>My Team</title>
+    </head>
     
 
-
-    <ul>
-    
-
-        ${employees.map(
-          (employee) => `
-            <li>${employee.getRole()}</li>
-            
-        `
-        )}
-
-        ${employees.map(
-          (employee) => `
-            <li>${employee.getName()}</li>
-        `
-        )}
-
-        
-        ${employees.filter((employee)=>employee.getRole() === "Engineer").map(
-          (employee) => `
-        <li>${employee.getGithub()}</li>
-        `
-
-      )}
-        
-    </ul>
+<div class=container>
+    ${employees
+      .map((employee) => {
+        let roleStatement;
+        switch (employee.getRole()) {
+          case "Engineer":
+            roleStatement = `Github: <a href="https://github.com/${employee.getGithub()}" target="_blank">${employee.getGithub()}</a>`;
+            break;
+          case "Manager":
+            roleStatement = `Office Number: ${employee.getOfficeNumber()}`;
+            break;
+          case "Intern":
+            roleStatement = `School: ${employee.getSchool()}`;
+            break;
+        }
+        return `
+        <div class="card" style="width: 18rem;">
+        <div class="card-body">
+            <h5 class="card-title">${employee.getName()}</h5>
+            <p class="card-text">${employee.getRole()}</p>
+            ${roleStatement}
+            <p>Email: <a href="mailto:${employee.getEmail()}">${employee.getEmail()}</a></p> 
+            <p>Employee ID: ${employee.getId()}<p>
+        </div>
+    </div>
+        `;
+      })
+      .join(" ")}
+        </div>
+    </div>
     `
   );
 }
